@@ -1,0 +1,129 @@
+<mxfile version="21.0.0" type="device">
+  <diagram id="algorithm_flow_v2" name="核心算法双轨流程图">
+    <mxGraphModel dx="1200" dy="950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <mxCell id="n1" value="获取流式时序数据&#10;(如：高频瓦斯监测数据)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="314" y="40" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n2" value="数据在线预处理&#10;(缺失前向填充与中值保边去噪)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="314" y="140" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n3" value="双引擎特征动态评估&#10;(一阶梯度瞬时 / 滑动方差积聚)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="314" y="240" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n4" value="实时特征指标突破&#10;安全死区阈值？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="314" y="340" width="200" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n5_true" value="触发流式截断机制&#10;(动态缩小采样桶，高频保真)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="110" y="460" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n5_false" value="维持平稳探测状态&#10;(锁定最大压缩桶，极限省流)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="518" y="460" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n6" value="提取极值关键点&#10;(完成即时采样结构重构)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="314" y="580" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n7_online" value="在线：双通道融合预警&#10;(二维联动矩阵 / 兜底红线)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="110" y="690" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8_online" value="实时分级闭环：&#10;柔性提频干预 或 刚性区域闭锁" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="110" y="790" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n7_offline" value="离线：后向迭代补偿&#10;(合并平稳小桶 / 分裂高方差大桶)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="518" y="690" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8_offline" value="精准锁定目标压缩比 M&#10;固化落盘至 TSDB 时序数据库" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="518" y="790" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" edge="1" parent="1" source="n1" target="n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="n2" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="n3" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="e4_t" value="是 (突破阈值，拉闸截断)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontStyle=1;fontColor=#b85450;strokeWidth=2;strokeColor=#b85450;" edge="1" parent="1" source="n4" target="n5_true">
+          <mxGeometry x="0.5" y="15" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="380" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="e4_f" value="否 (安全平稳区)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontStyle=1;fontColor=#9673a6;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="n4" target="n5_false">
+          <mxGeometry x="0.5" y="-15" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="618" y="380" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="e5_t" edge="1" parent="1" source="n5_true" target="n6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="550" />
+              <mxPoint x="414" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="e5_f" edge="1" parent="1" source="n5_false" target="n6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="618" y="550" />
+              <mxPoint x="414" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="e6_on" value="管线 1：即时干预" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;fontStyle=1;fontColor=#d79b00;strokeColor=#d6b656;" edge="1" parent="1" source="n6" target="n7_online">
+          <mxGeometry x="0.4118" y="15" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="414" y="660" />
+              <mxPoint x="210" y="660" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e6_off" value="管线 2：安全持久化" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;fontStyle=1;fontColor=#9673a6;strokeColor=#9673a6;" edge="1" parent="1" source="n6" target="n7_offline">
+          <mxGeometry x="0.4118" y="-15" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="414" y="660" />
+              <mxPoint x="618" y="660" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="e7_on" edge="1" parent="1" source="n7_online" target="n8_online">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e7_off" edge="1" parent="1" source="n7_offline" target="n8_offline">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
