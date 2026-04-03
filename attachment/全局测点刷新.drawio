@@ -1,0 +1,138 @@
+<mxfile version="21.0.0" type="device">
+  <diagram id="pinia_realtime_engine" name="全局按需订阅实时引擎架构">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /> 
+        <mxCell id="1" parent="0" />
+
+        <!-- 区域划分与背景框 -->
+        <mxCell id="area_vue" value="视图层 (Vue 3 组件)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;fontStyle=1;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="30" y="40" width="220" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="area_pinia" value="状态管理层 (Pinia Store 全局引擎)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;fontColor=#333333;strokeColor=#9673a6;fontStyle=1;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="300" y="40" width="380" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="area_backend" value="服务层 (Backend API &amp; Redis)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#ffe6cc;fontColor=#333333;strokeColor=#d79b00;fontStyle=1;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="730" y="40" width="240" height="520" as="geometry" />
+        </mxCell>
+
+        <!-- Vue 视图层节点 -->
+        <mxCell id="vue_page1" value="页面 A (大屏)&#10;需要:[101A, 202B]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="140" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="vue_page2" value="页面 B (局部列表)&#10;需要: [202B, 303C]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="320" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Pinia 引擎层节点 -->
+        <mxCell id="pinia_action" value="1. 生命周期触发注册 / 注销&#10;subscribeSensors(ids)&#10;unsubscribeSensors(ids)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="340" y="90" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pinia_deps" value="2. 核心：引用计数器池 (sensorDeps)&#10;{ '101A': 1, '202B': 2, '303C': 1 }" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="190" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pinia_payload" value="3. 动态提取合并 Payload (Getters)&#10;pollingPayload = ['101A', '202B', '303C']" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="340" y="290" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pinia_timer" value="4. 智能启停定时器 (防抖发送)&#10;setInterval (5s)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="380" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pinia_map" value="5. 全局响应式字典 (sensorDataMap)&#10;{ '101A': { value: 46 }, '202B': {...} }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;shadow=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="340" y="470" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- 后端服务层节点 -->
+        <mxCell id="be_api" value="批量轮询 API 接口&#10;POST /api/realtime" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="770" y="280" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="be_redis" value="Redis&#10;最新数据缓存" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="410" width="100" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- 连线：Vue -> Pinia 注册 -->
+        <mxCell id="edge_v1_p1" edge="1" parent="1" source="vue_page1" target="pinia_action">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="175" />
+              <mxPoint x="280" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_v2_p1" edge="1" parent="1" source="vue_page2" target="pinia_action">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="355" />
+              <mxPoint x="280" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 连线：Pinia 内部逻辑流转 -->
+        <mxCell id="edge_p1_p2" edge="1" parent="1" source="pinia_action" target="pinia_deps">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_p2_p3" edge="1" parent="1" source="pinia_deps" target="pinia_payload">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_p3_p4" edge="1" parent="1" source="pinia_payload" target="pinia_timer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 连线：Pinia -> 后端请求 -->
+        <mxCell id="edge_p4_be" value="发起请求携带 Payload 数组" edge="1" parent="1" source="pinia_timer" target="be_api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="680" y="410" />
+              <mxPoint x="680" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 连线：后端 -> Redis -->
+        <mxCell id="edge_be_redis" edge="1" parent="1" source="be_redis" target="be_api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 连线：后端返回 -> Pinia Map -->
+        <mxCell id="edge_be_p5" value="返回组装好的字典数据" edge="1" parent="1" source="be_api" target="pinia_map">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="850" y="505" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 连线：Pinia Map -> Vue 组件消费 (响应式绿色虚线) -->
+        <mxCell id="edge_p5_v1" value="Vue 响应式自动注入消费 (无缝渲染)" edge="1" parent="1" source="pinia_map" target="vue_page1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="505" />
+              <mxPoint x="260" y="190" />
+            </Array>
+          </mxGeometry>
+          <mxStyle as="style">
+            <mxStyle key="edgeStyle" value="orthogonalEdgeStyle" />
+            <mxStyle key="dashed" value="1" />
+            <mxStyle key="strokeWidth" value="2" />
+            <mxStyle key="strokeColor" value="#82b366" />
+          </mxStyle>
+        </mxCell>
+        <mxCell id="edge_p5_v2" edge="1" parent="1" source="pinia_map" target="vue_page2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="505" />
+              <mxPoint x="260" y="370" />
+            </Array>
+          </mxGeometry>
+          <mxStyle as="style">
+            <mxStyle key="edgeStyle" value="orthogonalEdgeStyle" />
+            <mxStyle key="dashed" value="1" />
+            <mxStyle key="strokeWidth" value="2" />
+            <mxStyle key="strokeColor" value="#82b366" />
+          </mxStyle>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
